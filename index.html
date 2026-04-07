@@ -3,102 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hepatitis B Decision Aid (2026 CDC Guidelines)</title>
+    <title>Hepatitis B Decision Aid | 2026 CDC Guidelines</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; --text: #333; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; justify-content: center; padding: 20px; }
-        #app-container { background: white; max-width: 650px; width: 100%; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .step { display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .progress-bar { height: 6px; background: #eee; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
-        #progress-fill { height: 100%; background: var(--accent); width: 25%; transition: width 0.4s ease; }
-        .btn-group { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; }
-        button { padding: 15px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; font-size: 1rem; background: white; transition: 0.2s; text-align: left; }
+        :root { 
+            --primary: #2c3e50; 
+            --accent: #3498db; 
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg: #f4f7f6; 
+            --text: #333; 
+        }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        #da-card { background: white; max-width: 650px; width: 100%; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-top: 20px; }
+        
+        /* Progress Bar */
+        .progress-container { height: 8px; background: #eee; border-radius: 4px; margin-bottom: 30px; position: relative; }
+        #progress-fill { height: 100%; background: var(--accent); width: 14%; transition: width 0.4s ease; border-radius: 4px; }
+        
+        /* Steps Visibility */
+        .step { display: none; min-height: 300px; }
+        .step.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Typography & Layout */
+        h1 { font-size: 1.8rem; color: var(--primary); margin-top: 0; }
+        h2 { font-size: 1.4rem; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .highlight-box { background: #eef7fd; border-left: 4px solid var(--accent); padding: 20px; border-radius: 4px; margin: 20px 0; }
+        .feedback { display: none; padding: 15px; border-radius: 6px; margin-top: 15px; }
+
+        /* Buttons */
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+        button { padding: 16px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; font-size: 1rem; background: white; transition: all 0.2s; text-align: left; font-weight: 500; }
         button:hover { background: #f0f7ff; border-color: var(--accent); }
-        .btn-nav { background: var(--accent); color: white; text-align: center; border: none; font-weight: bold; }
-        .risk-visual { background: #fffdf0; border: 1px solid #f1c40f; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        h1, h2 { color: var(--primary); }
-        .disclaimer { font-size: 0.8rem; color: #888; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; }
+        .btn-primary { background: var(--accent); color: white; border: none; text-align: center; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-outline { text-align: center; color: var(--accent); border-color: var(--accent); }
+
+        .icon-array { font-size: 0.8rem; letter-spacing: 2px; color: #ddd; line-height: 1; margin: 10px 0; }
+        .icon-array span.active { color: #e74c3c; }
+        
+        .footer-disclaimer { font-size: 0.75rem; color: #999; margin-top: 50px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="app-container">
-    <div class="progress-bar"><div id="progress-fill"></div></div>
+<div id="da-card">
+    <div class="progress-container"><div id="progress-fill"></div></div>
 
     <div class="step active" id="step1">
-        <h1>Hepatitis B Vaccination</h1>
-        <p>This decision aid reflects the <strong>2026 CDC Guidelines</strong> for infants born to HBsAg-negative mothers. It is designed to help you navigate the "Shared Clinical Decision-Making" process.</p>
+        <h1>Hepatitis B & Your Baby</h1>
+        <p>This decision aid is designed to help you understand the <strong>2026 CDC Guidelines</strong> for Hepatitis B vaccination and determine which path is right for your family.</p>
         <div class="btn-group">
-            <button class="btn-nav" onclick="move(2)">Begin Assessment</button>
+            <button class="btn-primary" onclick="move(2)">Start Decision Aid</button>
         </div>
     </div>
 
     <div class="step" id="step2">
-        <h2>Maternal Health Status</h2>
-        <p>Has the birthing parent tested positive for Hepatitis B (HBsAg)?</p>
+        <h2>About Hepatitis B</h2>
+        <p>Hepatitis B is a liver-damaging virus. Infants are at unique risk because their immune systems are still developing.</p>
+        <div class="highlight-box">
+            <strong>The "Silent" Infection:</strong><br>
+            If an infant is infected at birth, <strong>90 out of 100</strong> will develop a lifelong (chronic) infection. Most will show <strong>no symptoms</strong> for decades until liver damage occurs.
+        </div>
+        <p>The vaccine is over 90% effective at preventing this lifelong condition if started at birth.</p>
         <div class="btn-group">
-            <button onclick="record('maternal', 'positive'); move(5)">Yes / Unknown</button>
-            <button onclick="record('maternal', 'negative'); move(3)">No (Tested Negative)</button>
+            <button class="btn-primary" onclick="move(3)">I've Read the Facts</button>
         </div>
     </div>
 
     <div class="step" id="step3">
-        <h2>Environmental Factors</h2>
-        <p>Does the infant live with someone who has chronic Hep B, or will they travel to areas with high infection rates?</p>
+        <h2>Quick Check</h2>
+        <p>To ensure this tool provides the right advice, please answer this question:</p>
+        <p><em>True or False: Most infants with Hepatitis B look and feel sick immediately.</em></p>
         <div class="btn-group">
-            <button onclick="record('risk', 'high'); move(4)">Yes, there is potential exposure</button>
-            <button onclick="record('risk', 'low'); move(4)">No, risk is low</button>
+            <button onclick="checkAnswer(false)">True</button>
+            <button onclick="checkAnswer(true)">False</button>
+        </div>
+        <div id="quiz-feedback" class="feedback"></div>
+        <div class="btn-group" id="quiz-next" style="display:none">
+            <button class="btn-primary" onclick="move(4)">Continue to Assessment</button>
         </div>
     </div>
 
     <div class="step" id="step4">
-        <h2>Your Preferences</h2>
-        <p>Which approach aligns better with your family values?</p>
+        <h2>Maternal Health</h2>
+        <p>Was the birthing parent's Hepatitis B test (HBsAg) <strong>positive</strong> or <strong>unknown</strong> at the time of delivery?</p>
         <div class="btn-group">
-            <button onclick="record('priority', 'early'); move(5)">Early Protection: Starting at birth for maximum security.</button>
-            <button onclick="record('priority', 'flexibility'); move(5)">Flexibility: Starting at 2 months to minimize birth-day injections.</button>
+            <button onclick="record('maternal', 'positive'); move(7)">Yes / Unknown</button>
+            <button onclick="record('maternal', 'negative'); move(5)">No (Tested Negative)</button>
         </div>
     </div>
 
     <div class="step" id="step5">
-        <h2>Your Personalized Summary</h2>
-        <div id="result-text" class="risk-visual"></div>
+        <h2>Environment & Exposure</h2>
+        <p>In the 2026 guidelines, "Shared Decision-Making" applies to low-risk infants. Do any of these apply to your baby?</p>
+        <ul>
+            <li>Living with someone who has Hepatitis B</li>
+            <li>Travel to countries with high Hepatitis B rates</li>
+            <li>Possible exposure to someone with a chronic infection</li>
+        </ul>
         <div class="btn-group">
-            <button class="btn-nav" onclick="window.print()">Save/Print for Pediatrician</button>
-            <button onclick="location.reload()">Start Over</button>
+            <button onclick="record('risk', 'high'); move(6)">Yes, one or more apply</button>
+            <button onclick="record('risk', 'low'); move(6)">No, none apply</button>
         </div>
     </div>
 
-    <div class="disclaimer">
-        This tool is for educational purposes for a graduate project. It does not constitute medical advice.
+    <div class="step" id="step6">
+        <h2>Your Preferences</h2>
+        <p>Since your household risk is low, you have a choice. Which statement describes you better?</p>
+        <div class="btn-group">
+            <button onclick="record('priority', 'early'); move(7)">
+                <strong>Early Protection:</strong> "I want my baby protected as soon as possible, even if it means an extra injection on their first day."
+            </button>
+            <button onclick="record('priority', 'flexibility'); move(7)">
+                <strong>Flexibility:</strong> "I prefer to wait until the 2-month checkup to start the series, as the risk in our home is very low."
+            </button>
+        </div>
+    </div>
+
+    <div class="step" id="step7">
+        <h2>Your Personalized Decision Guide</h2>
+        <div id="result-text" class="highlight-box"></div>
+        <p>This summary is designed to facilitate a conversation with your pediatrician.</p>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="window.print()">Print This Report</button>
+            <button class="btn-outline" onclick="location.reload()">Start Over</button>
+        </div>
+    </div>
+
+    <div class="footer-disclaimer">
+        Developed for University Graduate Project. Not medical advice. Based on CDC 2026 Shared Decision-Making Framework.
     </div>
 </div>
 
 <script>
-    let data = { maternal: null, risk: null, priority: null };
-
-    function record(key, value) { data[key] = value; }
+    let userData = { maternal: null, risk: null, priority: null };
+    const totalSteps = 7;
 
     function move(step) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById('step' + step).classList.add('active');
-        document.getElementById('progress-fill').style.width = (step / 5 * 100) + '%';
-        if(step === 5) showResult();
+        document.getElementById('progress-fill').style.width = (step / totalSteps * 100) + '%';
+        if(step === 7) generateReport();
+        window.scrollTo(0, 0);
     }
 
-    function showResult() {
-        const res = document.getElementById('result-text');
-        if (data.maternal === 'positive') {
-            res.innerHTML = "<strong>Recommendation: Immediate Vaccination.</strong><br>CDC 2026 guidelines mandate the birth dose within 12 hours for infants of HBsAg-positive mothers to prevent vertical transmission.";
-        } else if (data.risk === 'high') {
-            res.innerHTML = "<strong>Recommendation: Birth Dose Advised.</strong><br>Due to environmental risk factors, the benefits of immediate protection outweigh the option to defer.";
+    function record(key, value) {
+        userData[key] = value;
+    }
+
+    function checkAnswer(isCorrect) {
+        const fb = document.getElementById('quiz-feedback');
+        fb.style.display = 'block';
+        if (isCorrect) {
+            fb.innerHTML = "<strong>Correct!</strong> Most infants show no symptoms, which is why early testing and vaccination are so important.";
+            fb.style.background = "#d4edda";
+            fb.style.color = "#155724";
         } else {
-            res.innerHTML = data.priority === 'early' 
-                ? "<strong>Choice: Birth Dose.</strong><br>Your preference for early protection aligns with the traditional universal schedule."
-                : "<strong>Choice: Deferred Start.</strong><br>In a low-risk environment, the 2026 guidelines allow for the first dose to be administered at the 2-month visit.";
+            fb.innerHTML = "<strong>Actually, that's False.</strong> Infants rarely show symptoms like jaundice. The virus is often 'silent' until it has caused significant liver damage later in life.";
+            fb.style.background = "#fff3cd";
+            fb.style.color = "#856404";
         }
+        document.getElementById('quiz-next').style.display = 'flex';
+    }
+
+    function generateReport() {
+        const res = document.getElementById('result-text');
+        let html = "";
+
+        if (userData.maternal === 'positive') {
+            html = "<h3>Path: High Priority Vaccination</h3>" +
+                   "<p><strong>Recommendation:</strong> Your baby should receive the Hepatitis B birth dose and HBIG within 12 hours. This is the most effective way to prevent a lifelong infection when a mother is HBsAg-positive.</p>";
+        } else if (userData.risk === 'high') {
+            html = "<h3>Path: Recommended Protection</h3>" +
+                   "<p><strong>Recommendation:</strong> Because of potential environmental exposure, starting the vaccine series at birth is strongly advised to provide early security.</p>";
+        } else {
+            if (userData.priority === 'early') {
+                html = "<h3>Path: Informed Choice - Early Start</h3>" +
+                       "<p><strong>Decision:</strong> You have chosen the 'Early Protection' path. Even though your household risk is low, you prefer the peace of mind that comes with completing the first dose at birth.</p>";
+            } else {
+                html = "<h3>Path: Informed Choice - Deferred Start</h3>" +
+                       "<p><strong>Decision:</strong> You have chosen to defer the first dose until the 2-month visit. According to 2026 guidelines, this is an acceptable option for low-risk infants born to HBsAg-negative mothers.</p>";
+            }
+        }
+        res.innerHTML = html;
     }
 </script>
 
