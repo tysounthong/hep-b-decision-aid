@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hepatitis B Birth Dose — Parent Decision Aid</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #1a4a4a;
+    --teal:        #2a6b6b;
+    --teal-mid:    #3d8c8c;
+    --teal-light:  #e8f4f4;
+    --teal-pale:   #f2fafa;
+    --amber:       #c47a2b;
+    --amber-light: #fdf3e3;
+    --amber-dark:  #7a4a00;
+    --red-risk:    #b84040;
+    --red-pale:    #fdf0f0;
+    --green:       #2e7d5e;
+    --green-pale:  #edf7f2;
+    --ink:         #1c2b2b;
+    --ink-mid:     #3a4f4f;
+    --ink-light:   #607070;
+    --border:      #ccdede;
+    --bg:          #f7fafa;
+    --shadow-sm:   0 1px 4px rgba(26,74,74,0.08);
+    --shadow-md:   0 4px 16px rgba(26,74,74,0.12);
+    --shadow-lg:   0 8px 32px rgba(26,74,74,0.16);
+    --radius:      12px;
+    --radius-lg:   20px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--teal-dark);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+  }
+  .site-header .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--teal-mid);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .site-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+  .site-header p { font-size: 0.75rem; color: rgba(255,255,255,0.65); margin-top: 1px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    position: sticky;
+    top: 72px;
+    z-index: 99;
+    box-shadow: var(--shadow-sm);
+  }
+  .progress-steps {
+    display: flex;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .progress-line {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    height: 2px;
+    background: var(--teal);
+    transition: width 0.4s ease;
+    z-index: 1;
+  }
+  .step-dot {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+  .dot-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-light);
+    transition: all 0.25s;
+  }
+  .step-dot.active .dot-circle {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+    box-shadow: 0 0 0 3px rgba(42,107,107,0.2);
+  }
+  .step-dot.done .dot-circle {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+  /* Gate step styling — amber when active */
+  .step-dot.gate-step.active .dot-circle {
+    background: var(--amber);
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(196,122,43,0.2);
+  }
+  .step-dot.gate-step.done .dot-circle {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .dot-label {
+    font-size: 9.5px;
+    color: var(--ink-light);
+    text-align: center;
+    max-width: 68px;
+    line-height: 1.2;
+  }
+  .step-dot.active .dot-label { color: var(--teal); font-weight: 600; }
+  .step-dot.gate-step.active .dot-label { color: var(--amber); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 36px 24px 80px;
+  }
+
+  /* ── SECTION CARDS ── */
+  .section-card {
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .section-card.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    line-height: 1.25;
+    margin-bottom: 20px;
+  }
+  .section-body { color: var(--ink-mid); }
+  .section-body p { margin-bottom: 14px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* ── GATE SECTION (Section 0) ── */
+  .gate-question-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 22px 0;
+  }
+  .gate-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    text-align: left;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: var(--shadow-sm);
+  }
+  .gate-option:hover { border-color: var(--teal-mid); background: var(--teal-pale); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .gate-option.selected { border-color: var(--teal); background: var(--teal-light); }
+  .gate-option.selected-positive { border-color: var(--amber); background: var(--amber-light); }
+  .gate-option.selected-unknown  { border-color: var(--amber); background: var(--amber-light); }
+  .gate-option-text strong { display: block; font-size: 0.93rem; color: var(--ink); margin-bottom: 3px; }
+  .gate-option-text span   { font-size: 0.8rem; color: var(--ink-light); line-height: 1.4; }
+
+  /* Directive shown inside Section 0 when positive/unknown chosen */
+  .directive-panel {
+    display: none;
+    margin-top: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+  .directive-panel.visible { display: block; }
+
+  .directive-alert {
+    background: #fff8ec;
+    border: 2px solid var(--amber);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+  .directive-alert .alert-title {
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--amber-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .directive-alert p {
+    font-size: 0.9rem;
+    color: #5a3800;
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .directive-alert p:last-child { margin-bottom: 0; }
+  .directive-alert strong { color: var(--amber-dark); }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 0.92rem; line-height: 1.6; }
+  .callout-text strong { display: block; margin-bottom: 3px; font-size: 0.95rem; }
+  .callout.info    { background: var(--teal-light); border-left: 4px solid var(--teal); }
+  .callout.warning { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .callout.danger  { background: var(--red-pale);    border-left: 4px solid var(--red-risk); }
+  .callout.success { background: var(--green-pale);  border-left: 4px solid var(--green); }
+
+  /* ── ICON ARRAYS ── */
+  .icon-array-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .icon-array-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-bottom: 6px;
+  }
+  .icon-array-subtitle {
+    font-size: 0.83rem;
+    color: var(--ink-light);
+    margin-bottom: 16px;
+  }
+  .icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .icon-figure { font-size: 1.15rem; line-height: 1; transition: transform 0.15s; }
+  .icon-figure:hover { transform: scale(1.2); }
+  .icon-array-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    margin-top: 8px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .compare-table th {
+    background: var(--teal-dark);
+    color: white;
+    padding: 13px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    letter-spacing: 0.02em;
+  }
+  .compare-table td {
+    padding: 12px 18px;
+    font-size: 0.88rem;
+    border-bottom: 1px solid var(--border);
+    background: white;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) td { background: var(--teal-pale); }
+  .compare-table td:first-child { font-weight: 600; color: var(--teal-dark); width: 30%; }
+
+  /* ── OUTCOME PATHWAY ── */
+  .pathway {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pathway-step { flex: 1; min-width: 100px; text-align: center; padding: 10px 8px; }
+  .pathway-step .step-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .pathway-step .step-label { font-size: 0.78rem; font-weight: 600; color: var(--teal-dark); line-height: 1.3; }
+  .pathway-arrow { font-size: 1.2rem; color: var(--teal-mid); flex-shrink: 0; padding: 0 4px; }
+
+  /* ── OPTIONS CARD ── */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+  .option-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--teal-mid);
+    border-radius: var(--radius-lg);
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+  .option-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .option-name { font-family: 'Lora', serif; font-weight: 700; font-size: 0.95rem; color: var(--teal-dark); margin-bottom: 6px; }
+  .option-desc { font-size: 0.78rem; color: var(--ink-light); line-height: 1.4; }
+
+  /* ── RISK STAT BLOCKS ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  @media (max-width: 500px) { .stat-row { grid-template-columns: 1fr; } }
+  .stat-block {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-block.highlight { background: var(--teal-dark); color: white; border-color: var(--teal-dark); }
+  .stat-block.highlight .stat-label { color: rgba(255,255,255,0.75); }
+  .stat-number { font-family: 'Lora', serif; font-size: 2.2rem; font-weight: 700; color: var(--teal-dark); line-height: 1; margin-bottom: 4px; }
+  .stat-block.highlight .stat-number { color: white; }
+  .stat-label { font-size: 0.78rem; color: var(--ink-light); line-height: 1.4; }
+
+  /* ── SAFETY GRID ── */
+  .safety-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  @media (max-width: 500px) { .safety-grid { grid-template-columns: 1fr; } }
+  .safety-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .safety-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--teal-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .safety-card ul { list-style: none; }
+  .safety-card ul li { font-size: 0.82rem; color: var(--ink-mid); padding: 3px 0; display: flex; align-items: flex-start; gap: 6px; }
+  .safety-card ul li::before { content: '·'; color: var(--teal-mid); font-weight: 700; flex-shrink: 0; }
+
+  /* ── POLICY TIMELINE ── */
+  .policy-timeline {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 18px;
+    position: relative;
+  }
+  .timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 36px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .timeline-content { flex: 1; }
+  .timeline-date { font-size: 0.72rem; font-weight: 600; color: var(--teal-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+  .timeline-text { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.5; }
+  .timeline-text strong { color: var(--ink); }
+
+  /* ── VALUES CLARIFICATION ── */
+  .values-form {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .values-question {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .values-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .q-label {
+    font-family: 'Lora', serif;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .q-sublabel { font-size: 0.8rem; color: var(--ink-light); margin-bottom: 14px; }
+
+  .likert { display: flex; gap: 8px; flex-wrap: wrap; }
+  .likert-opt { flex: 1; min-width: 70px; text-align: center; }
+  .likert-opt input[type="radio"] { display: none; }
+  .likert-opt label {
+    display: block;
+    padding: 8px 4px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    transition: all 0.2s;
+    line-height: 1.3;
+    background: white;
+  }
+  .likert-opt input:checked + label { background: var(--teal); border-color: var(--teal); color: white; font-weight: 600; }
+  .likert-opt label:hover { border-color: var(--teal-mid); color: var(--teal-dark); }
+
+  .values-check-group { display: flex; flex-direction: column; gap: 8px; }
+  .values-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .values-check:hover { border-color: var(--teal-mid); background: var(--teal-pale); }
+  .values-check input[type="checkbox"] { display: none; }
+  .check-box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .values-check.checked { border-color: var(--teal); background: var(--teal-light); }
+  .values-check.checked .check-box { background: var(--teal); border-color: var(--teal); }
+  .values-check.checked .check-box::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+  .check-label { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.4; }
+  .check-label strong { color: var(--ink); display: block; margin-bottom: 1px; font-size: 0.9rem; }
+
+  .concerns-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    background: white;
+  }
+  .concerns-input:focus { outline: none; border-color: var(--teal); }
+
+  /* ── SUMMARY ── */
+  .summary-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-header {
+    background: var(--teal-dark);
+    color: white;
+    padding: 18px 22px;
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .summary-body { padding: 22px; }
+  .summary-row {
+    display: flex;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    align-items: flex-start;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-q { color: var(--ink-light); flex: 0 0 200px; font-size: 0.82rem; padding-top: 1px; }
+  .summary-a { color: var(--ink); font-weight: 500; flex: 1; }
+
+  .questions-list {
+    background: var(--teal-pale);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+  }
+  .questions-list h4 { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--teal-dark); margin-bottom: 12px; }
+  .questions-list ol { padding-left: 18px; }
+  .questions-list li { font-size: 0.88rem; color: var(--ink-mid); padding: 4px 0; line-height: 1.4; }
+
+  /* ── NAV BUTTONS ── */
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--teal); color: white; box-shadow: 0 2px 8px rgba(42,107,107,0.3); }
+  .btn-primary:hover { background: var(--teal-dark); box-shadow: 0 4px 12px rgba(42,107,107,0.4); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none; }
+  .btn-ghost { background: transparent; color: var(--ink-light); border: 2px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--teal-mid); color: var(--teal-dark); background: var(--teal-pale); }
+  .btn-print { background: var(--amber); color: white; box-shadow: 0 2px 8px rgba(196,122,43,0.3); }
+  .btn-print:hover { background: #a86820; transform: translateY(-1px); }
+
+  .section-counter { font-size: 0.8rem; color: var(--ink-light); font-weight: 500; }
+
+  /* ── VALUE TRADE-OFF SLIDERS ── */
+  .tradeoff-item {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tradeoff-label-left,
+  .tradeoff-label-right {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-mid);
+    max-width: 44%;
+    line-height: 1.3;
+  }
+  .tradeoff-label-right { text-align: right; }
+  .tradeoff-slider {
+    width: 100%;
+    accent-color: var(--teal);
+    cursor: pointer;
+    margin: 4px 0 8px;
+    height: 6px;
+  }
+  .tradeoff-readout {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--teal);
+    min-height: 18px;
+  }
+
+  /* ── KNOWLEDGE CHECK ── */
+  .kc-question {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .kc-question .q-label { margin-bottom: 14px; }
+  .kc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kc-opt {
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .kc-opt:hover:not(:disabled) { border-color: var(--teal-mid); background: var(--teal-pale); }
+  .kc-opt.correct  { border-color: var(--green); background: var(--green-pale); color: var(--green); font-weight: 600; }
+  .kc-opt.incorrect { border-color: var(--red-risk); background: var(--red-pale); color: var(--red-risk); }
+  .kc-opt:disabled { cursor: default; }
+  .kc-feedback {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+    display: none;
+  }
+  .kc-feedback.visible { display: block; }
+  .kc-feedback.correct-fb { color: var(--green); font-weight: 500; }
+  .kc-feedback.incorrect-fb {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--ink);
+  }
+
+  /* ── MISC ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .disclaimer {
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    background: var(--teal-pale);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 28px;
+    line-height: 1.5;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .site-header, .progress-wrap, .nav-bar { display: none !important; }
+    .section-card { display: block !important; }
+    .main { padding: 0; max-width: 100%; }
+    .section-card { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">💉</div>
+  <div>
+    <h1>Hepatitis B Birth Dose — Parent Decision Aid</h1>
+    <p>Evidence-based tool to support informed decision-making &nbsp;·&nbsp; For U.S. parents</p>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps">
+    <div class="progress-line" id="progressLine"></div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 0 — Screening Gate
+       This is the first step in the wizard.
+       Routes HBsAg-positive and unknown-status
+       parents to a brief directive.
+       HBsAg-negative parents proceed to Section 1.
+  ══════════════════════════════════════════════ -->
+  <div class="section-card active" id="section-0">
+    <div class="section-eyebrow">Before You Begin — Step 1 of 9</div>
+    <h2 class="section-title">One Important Question First</h2>
+    <div class="section-body">
+      <p>All pregnant people are recommended to be tested for hepatitis B during prenatal care. Your hepatitis B status determines whether this decision aid applies to your situation.</p>
+      <p><strong>What is the hepatitis B surface antigen (HBsAg) status of the birthing parent?</strong></p>
+
+      <div class="gate-question-wrap">
+        <button class="gate-option" data-value="negative" onclick="selectGate(this)">
+          <div class="gate-option-text">
+            <strong>Tested negative for hepatitis B (HBsAg-negative)</strong>
+            <span>My prenatal test confirmed I do not currently have a hepatitis B infection.</span>
+          </div>
+        </button>
+        <button class="gate-option" data-value="positive" onclick="selectGate(this)">
+          <div class="gate-option-text">
+            <strong>Tested positive for hepatitis B (HBsAg-positive)</strong>
+            <span>My prenatal test showed that I am currently infected with hepatitis B.</span>
+          </div>
+        </button>
+        <button class="gate-option" data-value="unknown" onclick="selectGate(this)">
+          <div class="gate-option-text">
+            <strong>Status unknown — not tested, or test result not available</strong>
+            <span>I have not been tested, my results are unavailable, or I am unsure of my status.</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Directive panel — appears below options when positive/unknown selected -->
+      <div class="directive-panel" id="directivePanel">
+        <div class="directive-alert">
+          <div class="alert-title"><span id="directiveIcon"></span> <span id="directiveTitle">Vaccination is recommended for your baby</span></div>
+          <p id="directiveText"></p>
+          <p><strong>Please speak with your delivery team as soon as possible to confirm that both the hepatitis B vaccine and follow-up care will be given to your baby within 24 hours of birth.</strong></p>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-icon">💬</span>
+          <div class="callout-text">
+            <strong>What to do next</strong>
+            Let your obstetric nurse, midwife, or delivery doctor know your hepatitis B status before delivery. Ask them to confirm the birth dose and follow-up care are planned. You do not need to complete this decision aid.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <span class="section-counter">Step 1 of 9</span>
+      <button class="btn btn-primary" id="gate-next-btn" onclick="handleGateNext()" disabled>Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — Welcome & Decision Introduction
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-1">
+    <div class="section-eyebrow">Section 2 of 9</div>
+    <h2 class="section-title">Understanding the Decision</h2>
+    <div class="section-body">
+      <p>This decision aid is designed to help you make an informed choice about whether your newborn should receive the hepatitis B vaccine within 24 hours of birth. It is not meant to tell you what to decide — it is meant to make sure you have the information and space to decide for yourself.</p>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-text">
+          <strong>How to use this tool</strong>
+          Work through each section at your own pace using the Next button below. You can go back at any time. At the end, you will receive a personal summary to bring to your conversation with your healthcare provider.
+        </div>
+      </div>
+
+      <p>As a parent, you have <strong>three options</strong>:</p>
+      <div class="options-grid">
+        <div class="option-card">
+          <div class="option-name">Vaccinate at Birth</div>
+          <div class="option-desc">Your baby receives the hepatitis B vaccine within 24 hours of birth.</div>
+        </div>
+        <div class="option-card">
+          <div class="option-name">Delay Vaccination</div>
+          <div class="option-desc">You choose to wait until a later visit (typically 2 months) to begin the vaccine series.</div>
+        </div>
+        <div class="option-card">
+          <div class="option-name">Decline Vaccination</div>
+          <div class="option-desc">You choose not to vaccinate your baby against hepatitis B at this time.</div>
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-text">
+          <strong>These options carry different risks</strong>
+          This decision aid will walk you through what is known about those risks so you can weigh them clearly.
+        </div>
+      </div>
+
+      <p style="font-size:0.88rem; color:var(--ink-light);">This decision aid was developed as part of a graduate public health course and is based on peer-reviewed evidence and ACIP guidelines. It is not a substitute for advice from your healthcare provider.</p>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(0)">&larr; Back</button>
+      <span class="section-counter">Section 2 of 9</span>
+      <button class="btn btn-primary" onclick="goTo(2)">Next: About Hepatitis B &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — About Hepatitis B
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-2">
+    <div class="section-eyebrow">Section 3 of 9</div>
+    <h2 class="section-title">What Is Hepatitis B?</h2>
+    <div class="section-body">
+      <p>Hepatitis B is caused by the hepatitis B virus (HBV) which attacks the liver. It spreads through blood and body fluids — for example, from a mother to her baby during birth, through household contact with someone who is infected, or through unsterile medical or tattoo equipment.</p>
+
+      <div class="callout danger">
+        <span class="callout-icon">🔴</span>
+        <div class="callout-text">
+          <strong>Many people with hepatitis B don't know they have it</strong>
+          This is important because you cannot rely on visible signs of illness to know if someone in your household or community is a carrier. A person can have chronic hepatitis B for years without any symptoms, while still being capable of transmitting the virus to others.
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-block highlight">
+          <div class="stat-number">5 in 10</div>
+          <div class="stat-label">people with chronic HBV infection do not know they are infected</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-number">640K–1.7M</div>
+          <div class="stat-label">Americans estimated to be living with chronic hepatitis B</div>
+        </div>
+      </div>
+
+      <p>If hepatitis B infection becomes <em>chronic</em> (long-lasting), it can lead to serious liver disease over time. Chronic hepatitis B causes ongoing inflammation in the liver, which can lead to scarring of the liver tissue, a condition called cirrhosis. In some people, severe cirrhosis can progress to liver failure. People with chronic hepatitis B also have a significantly higher risk of developing primary liver cancer compared to those without the infection. Hepatitis B is the leading cause of liver cancer worldwide. Not everyone with chronic hepatitis B will experience these complications, but the risk adds up over a lifetime.</p>
+
+      <div class="icon-array-wrap">
+        <div class="icon-array-title">How many people with chronic hepatitis B will die earlier from liver disease or liver cancer?</div>
+        <div class="icon-array-subtitle">Out of every 10 people with chronic hepatitis B infection:</div>
+        <div class="icon-grid" id="mortalityArray"></div>
+        <div class="icon-array-legend">
+          <div class="legend-item"><span>🔴</span> Will die earlier from liver disease or cancer</div>
+          <div class="legend-item"><span>⚪</span> Will not die earlier from liver disease or cancer</div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <strong>Why does this matter for my baby?</strong>
+          Because so many people with hepatitis B don't know they have it, a negative test for the mother does not guarantee that a newborn has no exposure risk from other household members or community contacts.
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(1)">&larr; Back</button>
+      <span class="section-counter">Section 3 of 9</span>
+      <button class="btn btn-primary" onclick="goTo(3)">Next: Risk by Age &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — Chronicity Risk by Age
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-3">
+    <div class="section-eyebrow">Section 4 of 9</div>
+    <h2 class="section-title">Why Age at Infection Matters So Much</h2>
+    <div class="section-body">
+      <p>The younger your child is when infected, the far greater the chance the infection becomes a <em>lifelong chronic condition</em>.</p>
+
+      <div class="stat-row">
+        <div class="stat-block highlight">
+          <div class="stat-number">9 in 10</div>
+          <div class="stat-label">Babies infected at birth develop <strong>chronic</strong> hepatitis B</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-number">1 in 10</div>
+          <div class="stat-label">Adults infected with HBV develop <strong>chronic</strong> hepatitis B</div>
+        </div>
+      </div>
+
+      <div class="icon-array-wrap">
+        <div class="icon-array-title">If 10 babies are infected with HBV at birth, how many develop chronic infection?</div>
+        <div class="icon-array-subtitle">Each figure represents 1 infected newborn:</div>
+        <div class="icon-grid" id="neonatalArray"></div>
+        <div class="icon-array-legend">
+          <div class="legend-item"><span>🔴</span> Develops chronic hepatitis B (9 out of 10)</div>
+          <div class="legend-item"><span>⚪</span> Clears the infection (1 out of 10)</div>
+        </div>
+      </div>
+
+      <div class="icon-array-wrap">
+        <div class="icon-array-title">If 10 adults are infected with HBV, how many develop chronic infection?</div>
+        <div class="icon-array-subtitle">Each figure represents 1 infected adult:</div>
+        <div class="icon-grid" id="adultArray"></div>
+        <div class="icon-array-legend">
+          <div class="legend-item"><span>🔴</span> Develops chronic hepatitis B (~1 out of 10)</div>
+          <div class="legend-item"><span>⚪</span> Clears the infection (~9 out of 10)</div>
+        </div>
+      </div>
+
+      <table class="compare-table">
+        <thead><tr><th>Age at Infection</th><th>Chance of Chronic Infection</th><th>In plain language</th></tr></thead>
+        <tbody>
+          <tr><td>Newborn (at birth)</td><td>Up to 90%</td><td>9 out of 10 infected newborns</td></tr>
+          <tr><td>Child (ages 1–5)</td><td>20–60%</td><td>2 to 6 out of every 10 infected young children</td></tr>
+          <tr><td>Older child / adult</td><td>5–10%</td><td>About 1 out of every 10 infected adults</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <span class="callout-icon">⏱️</span>
+        <div class="callout-text">
+          <strong>Timing matters</strong>
+          The birth dose is offered within 24 hours of birth because the newborn period is the highest-risk time. A delay of even a few weeks means the window of maximum protection is missed.
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(2)">&larr; Back</button>
+      <span class="section-counter">Section 4 of 9</span>
+      <button class="btn btn-primary" onclick="goTo(4)">Next: Transmission Risk &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 4 — Transmission Risk
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-4">
+    <div class="section-eyebrow">Section 5 of 9</div>
+    <h2 class="section-title">How Could My Baby Be Exposed?</h2>
+    <div class="section-body">
+      <p>There are two main ways a newborn can be exposed to hepatitis B:</p>
+
+      <table class="compare-table">
+        <thead><tr><th>Route</th><th>What it means</th><th>U.S. context</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Vertical (birth)</td>
+            <td>Passed from mother to baby during delivery</td>
+            <td>Primary risk when mother tests positive. The birth dose + follow-up care prevents this in most cases.</td>
+          </tr>
+          <tr>
+            <td>Horizontal (household / community)</td>
+            <td>Passed through close contact, shared objects, or open cuts and sores</td>
+            <td>Lower risk in the general U.S. population, but real in households where a carrier may not know they are infected.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">🏠</span>
+        <div class="callout-text">
+          <strong>What about households where the mother tests negative?</strong>
+          Before universal vaccination, U.S.-born children of immigrant mothers who tested negative for HBV still had hepatitis B infection rates of about 1 in 10, from household and community contact.
+        </div>
+      </div>
+
+      <p>HBV can remain on surfaces at room temperature for up to 7 days, meaning indirect transmission through shared household items — razors, toothbrushes, nail clippers — is possible when a household member has an undiagnosed infection.</p>
+
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(3)">&larr; Back</button>
+      <span class="section-counter">Section 5 of 9</span>
+      <button class="btn btn-primary" onclick="goTo(5)">Next: Vaccine Efficacy & Safety &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 5 — Efficacy & Safety
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-5">
+    <div class="section-eyebrow">Section 6 of 9</div>
+    <h2 class="section-title">Does the Vaccine Work? Is It Safe?</h2>
+    <div class="section-body">
+
+      <h3 style="font-family:'Lora',serif;color:var(--teal-dark);font-size:1.1rem;margin-bottom:12px;">How well does the birth dose work?</h3>
+
+      <p>When given within 24 hours of birth, the hepatitis B vaccine — combined with follow-up doses — is about 90% effective at preventing transmission to babies born to infected mothers. At the population level, vaccination has driven a 99% decline in acute hepatitis B cases among children and young adults since 1990.</p>
+
+      <div class="stat-row">
+        <div class="stat-block highlight">
+          <div class="stat-number">90%</div>
+          <div class="stat-label">Effectiveness of birth dose + follow-up care at preventing vertical (birth) transmission</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-number">99%</div>
+          <div class="stat-label">Decline in acute hepatitis B cases among children &amp; young adults since 1990</div>
+        </div>
+      </div>
+
+      <div class="icon-array-wrap">
+        <div class="icon-array-title">For babies born to an HBsAg-positive mother with vs. without the birth dose</div>
+        <div class="icon-array-subtitle">Out of every 10 babies born to an infected mother:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;">
+          <div>
+            <p style="font-size:0.8rem;font-weight:600;color:var(--ink);margin-bottom:6px;">Without birth dose + follow-up care</p>
+            <div class="icon-grid" id="noVaxArray"></div>
+            <p style="font-size:0.78rem;color:var(--ink-light);margin-top:6px;">🔴 = contracts HBV &nbsp; ⚪ = protected</p>
+          </div>
+          <div>
+            <p style="font-size:0.8rem;font-weight:600;color:var(--ink);margin-bottom:6px;">With birth dose + follow-up care</p>
+            <div class="icon-grid" id="withVaxArray"></div>
+            <p style="font-size:0.78rem;color:var(--ink-light);margin-top:6px;">🔴 = contracts HBV &nbsp; ⚪ = protected</p>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <h3 style="font-family:'Lora',serif;color:var(--teal-dark);font-size:1.1rem;margin-bottom:12px;margin-top:4px;">Is the vaccine safe?</h3>
+      <p>The hepatitis B vaccine has one of the most thoroughly studied safety records of any vaccine, with over 40 years of use in the United States. There are some side effects associated with the hepatitis B vaccine. If you have any questions about side effects, consult a medical professional.</p>
+
+      <div class="safety-grid">
+        <div class="safety-card">
+          <h4>Common side effects</h4>
+          <ul>
+            <li>Soreness or redness at the injection site (about 1 in 4 babies)</li>
+            <li>Mild low-grade fever</li>
+            <li>Fussiness or drowsiness</li>
+          </ul>
+        </div>
+        <div class="safety-card">
+          <h4>What the evidence shows</h4>
+          <ul>
+            <li>No established link to autism, autoimmune disease, or developmental delay</li>
+            <li>No new safety signals have been identified</li>
+            <li>Safe for medically stable newborns ≥2,000g</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(4)">&larr; Back</button>
+      <span class="section-counter">Section 6 of 9</span>
+      <button class="btn btn-primary" onclick="goTo(6)">Next: Policy Context &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 6 — Policy Context
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-6">
+    <div class="section-eyebrow">Section 7 of 9</div>
+    <h2 class="section-title">What Is the Current Policy Situation?</h2>
+    <div class="section-body">
+      <p>You may have heard that recommendations for the hepatitis B birth dose have recently changed. This section explains what happened and what it means for your decision.</p>
+
+      <div class="policy-timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot">📅</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Since 1991 — over 30 years</div>
+            <div class="timeline-text"><strong>Universal birth dose recommended.</strong> ACIP recommended the hepatitis B vaccine for all medically stable newborns within 24 hours of birth. This policy led to a 99% decline in acute hepatitis B cases among children and young adults.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">⚠️</div>
+          <div class="timeline-content">
+            <div class="timeline-date">December 5, 2025</div>
+            <div class="timeline-text"><strong>ACIP votes to change the recommendation.</strong> A reconstituted committee moved from a universal recommendation to "shared clinical decision-making" for babies of HBsAg-negative mothers. No new safety data prompted this change. The American Academy of Pediatrics called the decision "irresponsible" and "purposely misleading."</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">⚖️</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Early 2026</div>
+            <div class="timeline-text"><strong>Federal court issues preliminary injunction.</strong> A judge found the reconstituted committee likely violates the Federal Advisory Committee Act (FACA) and stayed the December 2025 votes, temporarily restoring the prior universal recommendation. <strong>This is a preliminary ruling — the legal case is ongoing.</strong></div>
+          </div>
+        </div>
+        <div class="timeline-item" style="padding-bottom:0">
+          <div class="timeline-dot">📍</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Today</div>
+            <div class="timeline-text"><strong>Situation is unresolved.</strong> The policy is actively evolving. The underlying evidence for the birth dose has not changed regardless of what the recommendation says at any given moment.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-text">
+          <strong>What this means for your decision</strong>
+          No matter what the official recommendation says at the time of your baby's birth, the scientific evidence about hepatitis B risk and the effectiveness of the birth dose remains the same. This decision-aid is designed to help you decide based on that evidence and not on the current state of policy.
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(5)">&larr; Back</button>
+      <span class="section-counter">Section 7 of 10</span>
+      <button class="btn btn-primary" onclick="goTo(7)">Next: Knowledge Check &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 7 — Knowledge Check
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-7">
+    <div class="section-eyebrow">Section 8 of 10</div>
+    <h2 class="section-title">Quick Knowledge Check</h2>
+    <div class="section-body">
+      <p>Before reflecting on your values, let's check in on a few key facts from the previous sections. Select the answer you think is correct for each question. There is no penalty for incorrect answers — this is just to make sure you have the information you need.</p>
+
+      <!-- Q1 -->
+      <div class="kc-question" id="kc1">
+        <div class="q-label">1. If a newborn is infected with hepatitis B at birth, what is the chance they will develop a chronic (lifelong) infection?</div>
+        <div class="kc-options">
+          <button class="kc-opt" onclick="checkKC(1, this, true)">About 9 in 10</button>
+          <button class="kc-opt" onclick="checkKC(1, this, false)">About 5 in 10</button>
+          <button class="kc-opt" onclick="checkKC(1, this, false)">About 3 in 10</button>
+          <button class="kc-opt" onclick="checkKC(1, this, false)">About 1 in 10</button>
+        </div>
+        <div class="kc-feedback" id="kc1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="kc-question" id="kc2">
+        <div class="q-label">2. Approximately how many people with chronic hepatitis B in the U.S. do not know they are infected?</div>
+        <div class="kc-options">
+          <button class="kc-opt" onclick="checkKC(2, this, false)">Almost everyone</button>
+          <button class="kc-opt" onclick="checkKC(2, this, true)">About 5 in 10</button>
+          <button class="kc-opt" onclick="checkKC(2, this, false)">About 2 in 10</button>
+          <button class="kc-opt" onclick="checkKC(2, this, false)">About 1 in 10</button>
+        </div>
+        <div class="kc-feedback" id="kc2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="kc-question" id="kc3">
+        <div class="q-label">3. How effective is the hepatitis B birth dose combined with follow-up care at preventing transmission to a baby born to an infected mother?</div>
+        <div class="kc-options">
+          <button class="kc-opt" onclick="checkKC(3, this, true)">About 90%</button>
+          <button class="kc-opt" onclick="checkKC(3, this, false)">About 70%</button>
+          <button class="kc-opt" onclick="checkKC(3, this, false)">About 50%</button>
+          <button class="kc-opt" onclick="checkKC(3, this, false)">About 30%</button>
+        </div>
+        <div class="kc-feedback" id="kc3-feedback"></div>
+      </div>
+
+      <div id="kc-complete" style="display:none;">
+        <div class="callout success" style="margin-top:24px;">
+          <span class="callout-icon">✅</span>
+          <div class="callout-text">
+            <strong>Knowledge check complete</strong>
+            You can now move on to reflect on your values and receive your personal summary.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(6)">&larr; Back</button>
+      <span class="section-counter">Section 8 of 10</span>
+      <button class="btn btn-primary" id="kc-next-btn" onclick="goTo(8)" disabled>Next: What Matters to You &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 8 — Values Clarification
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-8">
+    <div class="section-eyebrow">Section 9 of 10</div>
+    <h2 class="section-title">What Matters Most to You?</h2>
+    <div class="section-body">
+      <p>Making a good decision means matching your choice to your values, not just to the facts. The questions below help you reflect on what matters most to you as a parent. There are no right or wrong answers.</p>
+
+      <div class="values-form">
+
+        <div class="values-question">
+          <div class="q-label">1. How do you feel about your baby receiving a vaccine within the first 24 hours of life?</div>
+          <div class="q-sublabel">Select the response that best matches your gut feeling right now.</div>
+          <div class="likert">
+            <div class="likert-opt"><input type="radio" name="q1" id="q1a" value="Very comfortable"><label for="q1a">Very comfortable</label></div>
+            <div class="likert-opt"><input type="radio" name="q1" id="q1b" value="Somewhat comfortable"><label for="q1b">Somewhat comfortable</label></div>
+            <div class="likert-opt"><input type="radio" name="q1" id="q1c" value="Unsure"><label for="q1c">Unsure</label></div>
+            <div class="likert-opt"><input type="radio" name="q1" id="q1d" value="Somewhat uncomfortable"><label for="q1d">Somewhat uncomfortable</label></div>
+            <div class="likert-opt"><input type="radio" name="q1" id="q1e" value="Very uncomfortable"><label for="q1e">Very uncomfortable</label></div>
+          </div>
+        </div>
+
+        <div class="values-question">
+          <div class="q-label">2. How concerned are you about your baby being exposed to hepatitis B?</div>
+          <div class="q-sublabel">Consider what you have learned in this tool about transmission and risk.</div>
+          <div class="likert">
+            <div class="likert-opt"><input type="radio" name="q2" id="q2a" value="Very concerned"><label for="q2a">Very concerned</label></div>
+            <div class="likert-opt"><input type="radio" name="q2" id="q2b" value="Somewhat concerned"><label for="q2b">Somewhat concerned</label></div>
+            <div class="likert-opt"><input type="radio" name="q2" id="q2c" value="Unsure"><label for="q2c">Unsure</label></div>
+            <div class="likert-opt"><input type="radio" name="q2" id="q2d" value="Not very concerned"><label for="q2d">Not very concerned</label></div>
+            <div class="likert-opt"><input type="radio" name="q2" id="q2e" value="Not at all concerned"><label for="q2e">Not at all concerned</label></div>
+          </div>
+        </div>
+
+        <div class="values-question">
+          <div class="q-label">3. For each pair below, move the slider toward the value that matters most to you. The midpoint means both are equally important.</div>
+          <div class="q-sublabel">There are no right or wrong answers — this helps you reflect on what guides your decision.</div>
+          <div id="tradeoffWrap" style="display:flex;flex-direction:column;gap:22px;margin-top:4px;">
+
+            <div class="tradeoff-item" data-key="tradeoff1">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span class="tradeoff-label-left">Protecting my baby from preventable risks</span>
+                <span class="tradeoff-label-right">Minimising interventions at birth</span>
+              </div>
+              <input type="range" class="tradeoff-slider" min="0" max="100" value="50" id="t1">
+              <div class="tradeoff-readout" id="t1-readout">Equally important</div>
+            </div>
+
+            <div class="tradeoff-item" data-key="tradeoff2">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span class="tradeoff-label-left">Weighing the medical evidence carefully</span>
+                <span class="tradeoff-label-right">Making my own fully independent choice</span>
+              </div>
+              <input type="range" class="tradeoff-slider" min="0" max="100" value="50" id="t2">
+              <div class="tradeoff-readout" id="t2-readout">Equally important</div>
+            </div>
+
+            <div class="tradeoff-item" data-key="tradeoff3">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span class="tradeoff-label-left">Avoiding the risk of my baby contracting HBV</span>
+                <span class="tradeoff-label-right">Avoiding potential vaccine side effects</span>
+              </div>
+              <input type="range" class="tradeoff-slider" min="0" max="100" value="50" id="t3">
+              <div class="tradeoff-readout" id="t3-readout">Equally important</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="values-question">
+          <div class="q-label">4. Is there anything specific you are worried about, or any question you most want to ask your healthcare provider?</div>
+          <div class="q-sublabel">Optional — your response will appear in your personal summary.</div>
+          <textarea class="concerns-input" id="concernsText" placeholder="For example: 'I want to know if my baby's weight affects the decision' or 'I have a question about the vaccine ingredients'..."></textarea>
+        </div>
+
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(7)">&larr; Back</button>
+      <span class="section-counter">Section 9 of 10</span>
+      <button class="btn btn-primary" onclick="buildSummaryAndGoTo(9)">Next: Your Summary &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 8 — Summary & Next Steps
+  ══════════════════════════════════════════════ -->
+  <div class="section-card" id="section-9">
+    <div class="section-eyebrow">Section 10 of 10</div>
+    <h2 class="section-title">Your Summary &amp; Next Steps</h2>
+    <div class="section-body">
+      <p>Below is a summary of what you told us in this tool. You can print or save this page to bring to your conversation with your healthcare provider.</p>
+
+      <div class="summary-card">
+        <div class="summary-header">Your Values &amp; Responses</div>
+        <div class="summary-body" id="summaryBody"></div>
+      </div>
+
+      <h3 style="font-family:'Lora',serif;color:var(--teal-dark);font-size:1.05rem;margin:24px 0 10px;">Key things to remember</h3>
+      <table class="compare-table">
+        <thead><tr><th>Option</th><th>Key consideration</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Vaccinate at birth</td>
+            <td>Protects against both vertical and horizontal transmission. Reduces chronic infection risk by over 90% for babies of infected mothers.</td>
+          </tr>
+          <tr>
+            <td>Delay to 2 months</td>
+            <td>Misses the highest-risk transmission window. No clinical benefit to delay for healthy, full-term infants.</td>
+          </tr>
+          <tr>
+            <td>Decline</td>
+            <td>Avoids vaccine side effects, which are usually mild and short-lived. Your baby will not have protection against hepatitis B during the period when infection is most likely to become chronic.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="questions-list">
+        <h4>💬 Suggested questions to ask your healthcare provider</h4>
+        <ol>
+          <li>Based on my family's history and circumstances, what is my baby's personal risk of HBV exposure?</li>
+          <li>Are there any medical reasons specific to my baby (e.g., premature birth, low birth weight) that would affect the timing?</li>
+          <li>What exactly happens if we delay — what is the procedure and timeline?</li>
+          <li>Can you walk me through the vaccine's safety record and what the known side effects are?</li>
+          <li>Is there anything about our household situation I should tell you that would affect this decision?</li>
+        </ol>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">📞</span>
+        <div class="callout-text">
+          <strong>You do not have to decide alone</strong>
+          Your obstetric care team, pediatrician, or midwife can answer questions specific to your baby and your family's situation. Bring this summary with you to that conversation.
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>About this tool:</strong> This decision aid was developed as part of a graduate public health risk communication course. It is based on peer-reviewed evidence and ACIP guidelines current as of 2025–2026, including updated U.S. HBV prevalence estimates. It is for informational purposes only and is not a substitute for personalized medical advice from a licensed healthcare provider.
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(8)">&larr; Back</button>
+      <span class="section-counter">Section 10 of 10</span>
+      <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save Summary</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── STEP CONFIG ─────────────────────────────────────────────────────────────
+const steps = [
+  { label: "Your Status", gate: true },
+  { label: "Intro" },
+  { label: "About Hepatitis B" },
+  { label: "Age Risk" },
+  { label: "Transmission" },
+  { label: "Efficacy & Safety" },
+  { label: "Policy" },
+  { label: "Knowledge Check" },
+  { label: "Your Values" },
+  { label: "Summary" },
+];
+
+let current = 0;
+let gateSelection = null;
+let maternalStatus = '';
+
+// ─── PROGRESS BAR ────────────────────────────────────────────────────────────
+function buildProgress() {
+  const wrap = document.getElementById('progressSteps');
+  steps.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot' + (s.gate ? ' gate-step' : '') + (i === 0 ? ' active' : '');
+    dot.id = `dot-${i}`;
+    dot.innerHTML = `<div class="dot-circle">${i + 1}</div><div class="dot-label">${s.label}</div>`;
+    dot.addEventListener('click', () => { if (i < current || (i === 0)) goTo(i); });
+    wrap.appendChild(dot);
+  });
+}
+
+function updateProgress() {
+  steps.forEach((s, i) => {
+    const dot = document.getElementById(`dot-${i}`);
+    const isGate = s.gate ? ' gate-step' : '';
+    dot.className = 'step-dot' + isGate + (i === current ? ' active' : i < current ? ' done' : '');
+  });
+  const line = document.getElementById('progressLine');
+  const pct = current === 0 ? 0 : (current / (steps.length - 1)) * 100;
+  line.style.width = `calc(${pct}% - ${pct === 0 ? 0 : 28}px)`;
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function goTo(index) {
+  document.getElementById(`section-${current}`).classList.remove('active');
+  current = index;
+  document.getElementById(`section-${current}`).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── SCREENING GATE ──────────────────────────────────────────────────────────
+function selectGate(el) {
+  // Clear all selections
+  document.querySelectorAll('.gate-option').forEach(o => {
+    o.classList.remove('selected', 'selected-positive', 'selected-unknown');
+  });
+
+  gateSelection = el.dataset.value;
+
+  if (gateSelection === 'negative') {
+    el.classList.add('selected');
+    // Hide directive, enable continue
+    document.getElementById('directivePanel').classList.remove('visible');
+    document.getElementById('gate-next-btn').disabled = false;
+    document.getElementById('gate-next-btn').textContent = 'Continue to Decision Aid →';
+    maternalStatus = 'HBsAg-negative (confirmed)';
+
+  } else if (gateSelection === 'positive') {
+    el.classList.add('selected-positive');
+    maternalStatus = 'HBsAg-positive';
+    showDirective(
+      '',
+      'The hepatitis B birth dose is recommended for your baby',
+      'Because you have tested positive for hepatitis B, your baby should receive the hepatitis B vaccine and follow-up care at birth. Your care team will guide you through this.'
+    );
+    document.getElementById('gate-next-btn').disabled = true;
+
+  } else {
+    el.classList.add('selected-unknown');
+    maternalStatus = 'HBsAg status unknown';
+    showDirective(
+      '',
+      'The hepatitis B birth dose is recommended for your baby',
+      'Because your hepatitis B status is not known, your baby should receive the hepatitis B vaccine and hepatitis B immune globulin (HBIG) at birth as a precaution. Your care team will guide you through this.'
+    );
+    document.getElementById('gate-next-btn').disabled = true;
+  }
+}
+
+function showDirective(icon, title, text) {
+  document.getElementById('directiveIcon').textContent = icon;
+  document.getElementById('directiveTitle').textContent = title;
+  document.getElementById('directiveText').textContent = text;
+  document.getElementById('directivePanel').classList.add('visible');
+  // Scroll directive into view smoothly
+  setTimeout(() => {
+    document.getElementById('directivePanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+function handleGateNext() {
+  // Only reachable if HBsAg-negative selected
+  if (gateSelection === 'negative') goTo(1);
+}
+
+// ─── ICON ARRAYS ─────────────────────────────────────────────────────────────
+function buildIconArray(id, total, highlighted, hiEmoji, dimEmoji) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const s = document.createElement('span');
+    s.className = 'icon-figure' + (i >= highlighted ? ' dim' : '');
+    s.textContent = i < highlighted ? hiEmoji : dimEmoji;
+    el.appendChild(s);
+  }
+}
+
+function buildAllArrays() {
+  buildIconArray('mortalityArray', 10, 2, '🔴', '⚪');
+  buildIconArray('neonatalArray', 10, 9, '🔴', '⚪');
+  buildIconArray('adultArray',    10, 1, '🔴', '⚪');
+  buildIconArray('noVaxArray',    10, 9, '🔴', '⚪');
+  buildIconArray('withVaxArray',  10, 1, '🔴', '⚪');
+}
+
+// ─── VALUE TRADE-OFF SLIDERS ─────────────────────────────────────────────────
+const tradeoffPairs = [
+  { id: 't1', left: 'Protecting my baby from preventable risks', right: 'Minimising interventions at birth' },
+  { id: 't2', left: 'Following medical evidence and guidelines',  right: 'Making my own fully independent choice' },
+  { id: 't3', left: 'Avoiding the risk of HBV infection',        right: 'Avoiding potential vaccine side effects' },
+];
+
+function sliderReadout(val, left, right) {
+  if (val < 20)       return `Strongly prefer: ${left}`;
+  if (val < 40)       return `Lean toward: ${left}`;
+  if (val <= 60)      return 'Equally important';
+  if (val < 80)       return `Lean toward: ${right}`;
+  return `Strongly prefer: ${right}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  tradeoffPairs.forEach(({ id, left, right }) => {
+    const slider = document.getElementById(id);
+    const readout = document.getElementById(`${id}-readout`);
+    if (!slider) return;
+    slider.addEventListener('input', () => {
+      readout.textContent = sliderReadout(parseInt(slider.value), left, right);
+    });
+  });
+
+  // Values checkboxes (retained for any remaining uses)
+  document.querySelectorAll('.values-check').forEach(label => {
+    label.addEventListener('click', () => {
+      const cb = label.querySelector('input[type="checkbox"]');
+      cb.checked = !cb.checked;
+      label.classList.toggle('checked', cb.checked);
+    });
+  });
+});
+
+// ─── BUILD SUMMARY ───────────────────────────────────────────────────────────
+function buildSummaryAndGoTo(index) {
+  const q1 = document.querySelector('input[name="q1"]:checked');
+  const q2 = document.querySelector('input[name="q2"]:checked');
+  const concerns = document.getElementById('concernsText').value.trim();
+
+  // Read trade-off slider positions
+  const tradeoffSummaries = tradeoffPairs.map(({ id, left, right }) => {
+    const slider = document.getElementById(id);
+    const val = slider ? parseInt(slider.value) : 50;
+    return `${left} vs. ${right}: <em>${sliderReadout(val, left, right)}</em>`;
+  });
+
+  const rows = [
+    { q: 'Birthing parent HBsAg status', a: maternalStatus || '<em style="color:var(--ink-light)">Not recorded</em>' },
+    { q: 'Comfort with birth dose',      a: q1 ? q1.value : '<em style="color:var(--ink-light)">Not answered</em>' },
+    { q: 'Concern about HBV exposure',   a: q2 ? q2.value : '<em style="color:var(--ink-light)">Not answered</em>' },
+    { q: 'Value trade-offs',             a: tradeoffSummaries.join('<br>') },
+    { q: 'Questions / concerns noted',   a: concerns || '<em style="color:var(--ink-light)">None noted</em>' },
+  ];
+
+  document.getElementById('summaryBody').innerHTML = rows.map(r =>
+    `<div class="summary-row"><div class="summary-q">${r.q}</div><div class="summary-a">${r.a}</div></div>`
+  ).join('');
+
+  goTo(index);
+}
+
+// ─── KNOWLEDGE CHECK ─────────────────────────────────────────────────────────
+const kcFeedback = {
+  1: {
+    correct: '✓ That\'s right. About 9 in 10 babies infected with HBV at birth will develop a chronic, lifelong infection — compared to only about 1 in 10 adults who are infected.',
+    incorrect: 'The answer is about 9 in 10. This is one of the most important facts about hepatitis B: newborns who are infected have a very high chance of developing a chronic, lifelong infection. This is why timing of the birth dose matters so much — it protects babies during the window when they are most vulnerable.'
+  },
+  2: {
+    correct: '✓ That\'s right. About 5 in 10 — roughly half — of people with chronic hepatitis B in the U.S. do not know they are infected, because the virus often causes no symptoms.',
+    incorrect: 'The answer is about 5 in 10. Roughly half of people with chronic hepatitis B have no idea they carry the virus, because it can exist without any symptoms for years or even decades. This is why a negative maternal test alone cannot fully guarantee a newborn\'s exposure risk from the wider household or community.'
+  },
+  3: {
+    correct: '✓ That\'s right. The birth dose combined with follow-up care is about 90% effective at preventing HBV transmission to a baby born to an infected mother — but only when given within 24 hours of birth.',
+    incorrect: 'The answer is about 90%. When both the hepatitis B vaccine and follow-up care are given within 24 hours of birth, they are about 90% effective at preventing transmission to a baby born to an infected mother. This high effectiveness is why timing matters — delays reduce the protective effect.'
+  }
+};
+
+const kcAnswered = { 1: false, 2: false, 3: false };
+
+function checkKC(qNum, btn, isCorrect) {
+  if (kcAnswered[qNum]) return;
+  kcAnswered[qNum] = true;
+
+  // Disable all options for this question
+  const opts = btn.closest('.kc-question').querySelectorAll('.kc-opt');
+  opts.forEach(o => o.disabled = true);
+
+  // Style the selected button
+  btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+  // Show feedback
+  const fb = document.getElementById(`kc${qNum}-feedback`);
+  fb.classList.add('visible');
+  if (isCorrect) {
+    fb.classList.add('correct-fb');
+    fb.textContent = kcFeedback[qNum].correct;
+  } else {
+    fb.classList.add('incorrect-fb');
+    fb.textContent = kcFeedback[qNum].incorrect;
+    // Also highlight the correct answer
+    opts.forEach(o => {
+      if (o.onclick.toString().includes('true')) o.classList.add('correct');
+    });
+  }
+
+  // Enable next button once all three are answered
+  if (Object.values(kcAnswered).every(Boolean)) {
+    document.getElementById('kc-complete').style.display = 'block';
+    document.getElementById('kc-next-btn').disabled = false;
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+buildProgress();
+updateProgress();
+buildAllArrays();
+</script>
+</body>
+</html>
